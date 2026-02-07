@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'; // <--- Import useEffect
-import { Search, ShoppingBag, Star, Clock, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, Star, Clock, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useNavigate, useLocation } from 'react-router-dom'; // <--- Import useLocation
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const FoodOnTrain = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Hook to read URL
+  const location = useLocation();
   
   const [pnr, setPnr] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,21 +13,17 @@ const FoodOnTrain = () => {
   const [cart, setCart] = useState([]);
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
 
-  // --- 1. AUTO-FETCH LOGIC ---
   useEffect(() => {
-    // Read PNR from URL (e.g., /food?pnr=12345)
     const params = new URLSearchParams(location.search);
     const urlPnr = params.get('pnr');
-
     if (urlPnr && urlPnr.length === 10) {
-      setPnr(urlPnr); // Set the input box value
-      fetchPnrDetails(urlPnr); // Trigger the fetch automatically
+      setPnr(urlPnr);
+      fetchPnrDetails(urlPnr);
     }
   }, [location]);
 
   const fetchPnrDetails = (pnrValue) => {
     setLoading(true);
-    // Simulate API Call
     setTimeout(() => {
       setLoading(false);
       setTrainDetails({
@@ -41,7 +37,6 @@ const FoodOnTrain = () => {
       toast.success("PNR Verified! Showing restaurants.");
     }, 1500);
   };
-  // ---------------------------
 
   const handleFetchPNR = (e) => {
     e.preventDefault();
@@ -52,7 +47,6 @@ const FoodOnTrain = () => {
     fetchPnrDetails(pnr);
   };
 
-  // ... (REST OF THE LOGIC IS SAME AS BEFORE: Restaurants Array, Cart Logic, etc.)
   const restaurants = [
     {
       id: 1,
@@ -146,27 +140,30 @@ const FoodOnTrain = () => {
   return (
     <div className="bg-gray-50 min-h-screen pb-24">
       {!trainDetails ? (
-        <div className="relative bg-gradient-to-r from-orange-600 to-red-600 h-[400px] flex flex-col justify-center items-center text-center px-4">
+        <div className="relative bg-gradient-to-r from-orange-600 to-red-600 h-[450px] md:h-[400px] flex flex-col justify-center items-center text-center px-4">
           <div className="relative z-10 max-w-2xl w-full">
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">Delicious Food at Your Seat</h1>
             <p className="text-orange-100 text-lg mb-8">Order from Top Restaurants | Hygienic | On-Time Delivery</p>
-            <div className="bg-white p-2 rounded-full shadow-2xl flex pl-6 items-center">
+            
+            {/* FIXED SEARCH BAR FOR MOBILE */}
+            <div className="bg-white p-2 rounded-2xl md:rounded-full shadow-2xl flex flex-col md:flex-row pl-2 md:pl-6 items-center gap-2 md:gap-0">
               <input 
                 type="text" 
                 maxLength="10" 
                 value={pnr} 
                 onChange={(e) => setPnr(e.target.value.replace(/\D/g, ''))} 
                 placeholder="Enter 10-digit PNR Number" 
-                className="flex-grow text-gray-800 font-bold text-lg focus:outline-none placeholder-gray-400"
+                className="w-full flex-grow text-gray-800 font-bold text-lg p-3 md:p-0 text-center md:text-left focus:outline-none placeholder-gray-400"
               />
               <button 
                 onClick={handleFetchPNR} 
                 disabled={loading}
-                className="bg-gray-900 text-white rounded-full px-8 py-4 font-bold hover:scale-105 transition flex items-center gap-2 disabled:bg-gray-500"
+                className="w-full md:w-auto bg-gray-900 text-white rounded-xl md:rounded-full px-8 py-3 md:py-4 font-bold hover:scale-105 transition flex justify-center items-center gap-2 disabled:bg-gray-500 whitespace-nowrap"
               >
                 {loading ? 'Fetching...' : 'SUBMIT'}
               </button>
             </div>
+
           </div>
         </div>
       ) : (
